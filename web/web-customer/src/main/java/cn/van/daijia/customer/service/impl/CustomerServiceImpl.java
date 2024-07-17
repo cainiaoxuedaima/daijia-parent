@@ -29,18 +29,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public String login(String code) {
         //1.获取code进行远程调用，返回用户id
-        Result<Long> login = client.login(code);
+        Result<Long> loginResult = client.login(code);
 
         //2. 判断如果失败了，返回错误提示
-        Integer codeResult=login.getCode();
+        Integer codeResult=loginResult.getCode();
         if (codeResult!=200) {
-            throw new GuiguException(ResultCodeEnum.FAIL);
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
         //3. 获取远程调用返回用户id
-        Long customer = login.getData();
+        Long customer = loginResult.getData();
         //4 判断返回的用户id是否为空 如果为空，返回错误提示
         if(customer==null){
-            throw new GuiguException(ResultCodeEnum.FAIL);
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
         //5.生成token字符串
         String token = UUID.randomUUID().toString().replaceAll("-","");
@@ -50,7 +50,7 @@ public class CustomerServiceImpl implements CustomerService {
         redisTemplate.opsForValue().set(RedisConstant.USER_LOGIN_KEY_PREFIX+token,
                 customer.toString(),
                 RedisConstant.USER_LOGIN_KEY_TIMEOUT,
-                TimeUnit.MINUTES);
+                TimeUnit.SECONDS);
         //7.返回token
         return token;
     }

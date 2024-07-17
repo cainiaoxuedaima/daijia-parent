@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Data
-@ConfigurationProperties(prefix="wx.minapp")
+@ConfigurationProperties(prefix="wx.miniapp")
 public class WxConfigProperties {
     //微信小程序的id和密码
-    private String appId;
+    private String appid;
     private String secret;
 }

@@ -13,19 +13,18 @@ import org.springframework.stereotype.Component;
  * @DataTime:2024/7/17 17:16
  */
 @Component
-
 public class WxConfigOperator {
     @Autowired
     private WxConfigProperties wxConfigProperties;
     @Bean
-    private WxMaService wxMaService(){
+    public WxMaService wxMaService(){
         //微信小程序id和密钥
-        WxMaDefaultConfigImpl wxMaconfig = new WxMaDefaultConfigImpl();
-        wxMaconfig.setAppid(wxConfigProperties.getAppId());
-        wxMaconfig.setSecret(wxConfigProperties.getSecret());
+        WxMaDefaultConfigImpl wxMaConfig = new WxMaDefaultConfigImpl();
+        wxMaConfig.setAppid(wxConfigProperties.getAppid());
+        wxMaConfig.setSecret(wxConfigProperties.getSecret());
 
         WxMaService service=new WxMaServiceImpl();
-        service.setWxMaConfig(wxMaconfig);
+        service.setWxMaConfig(wxMaConfig);
         return service;
     }
 
