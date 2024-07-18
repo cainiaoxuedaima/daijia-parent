@@ -38,7 +38,7 @@ public class VanLoginAspect {
         //2.从请求头获取token
         String token = request.getHeader("token");
         //3. 判断token是否为空，如果为空，返回登录提示
-        if(!StringUtils.isEmpty(token)){
+        if(!StringUtils.hasText(token)) {
             throw new GuiguException(ResultCodeEnum.LOGIN_AUTH);
         }
         //4. token不为空，查询redis
