@@ -14,11 +14,11 @@ public interface DriverInfoFeignClient {
      * @param code
      * @return
      */
-    @GetMapping("/device/info/login/{code}")
+    @GetMapping("/driver/info/login/{code}")
     Result<Long> login(@PathVariable("code") String code);
 
 
-    @GetMapping("/device/info/getDriverLoginInfo/{driverId}")
+    @GetMapping("/driver/info/getDriverLoginInfo/{driverId}")
     Result<DriverLoginVo>getDriverLoginInfo(@PathVariable("driverId") Long driverId);
 
 }

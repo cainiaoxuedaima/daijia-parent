@@ -29,7 +29,7 @@ public class DriverInfoController {
     }
 
     @Operation(summary = "获取司机的登录信息")
-    @GetMapping("/getDriverLoginInfo/{driverInfo}")
+    @GetMapping("/getDriverLoginInfo/{driverId}")
     public Result<DriverLoginVo>getDriverLoginInfo(@PathVariable Long driverId){
 
         DriverLoginVo driverLoginVo = driverInfoService.getDriverLoginInfo(driverId);
