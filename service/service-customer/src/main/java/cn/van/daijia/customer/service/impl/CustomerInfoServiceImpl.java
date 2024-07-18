@@ -14,6 +14,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Slf4j
 @Service
@@ -75,7 +76,10 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
         CustomerLoginVo customerLoginVo = new CustomerLoginVo();
         BeanUtils.copyProperties(customerInfo,customerLoginVo);//工具类，复制到对象
         //3 CustomerLoginVo返回
+        String phone= customerInfo.getPhone();
+        boolean isBindPhone = StringUtils.hasText(phone);
+        customerLoginVo.setIsBindPhone(isBindPhone);//isBindPhone是判断手机号是否绑定
 
-        return null;
+        return customerLoginVo;
     }
 }
