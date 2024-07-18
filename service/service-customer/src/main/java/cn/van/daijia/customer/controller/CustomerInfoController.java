@@ -3,6 +3,7 @@ package cn.van.daijia.customer.controller;
 import cn.van.daijia.common.result.Result;
 import cn.van.daijia.customer.service.CustomerInfoService;
 import cn.van.daijia.model.entity.customer.CustomerInfo;
+import cn.van.daijia.model.form.customer.UpdateWxPhoneForm;
 import cn.van.daijia.model.vo.customer.CustomerLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,11 @@ public class CustomerInfoController {
 
 
 
+	@Operation(summary ="更新客户微信手机号码")
+	@PostMapping("/updateWxPhoneNumber")
+	public Result<Boolean>updateWxPhoneNumber(@RequestBody UpdateWxPhoneForm updateWxPhoneForm){
+		return Result.ok(customerInfoService.updateWxPhoneNumber(updateWxPhoneForm));
+	}
 	@Operation(summary = "获取客户登录信息")
 	@GetMapping("/getCustomerLoginInfo/{customerId}")
 	public Result<CustomerLoginVo>getCustomerLoginInfo(@PathVariable Long customerId){
