@@ -14,12 +14,15 @@ import cn.van.daijia.model.entity.driver.DriverAccount;
 import cn.van.daijia.model.entity.driver.DriverInfo;
 import cn.van.daijia.model.entity.driver.DriverLoginLog;
 import cn.van.daijia.model.entity.driver.DriverSet;
+import cn.van.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 
@@ -92,5 +95,24 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
         return null;
+    }
+
+
+    /**
+     * 获取司机的登录信息
+     * @param driverId
+     * @return
+     */
+    @Override
+    public DriverLoginVo getDriverLoginInfo(Long driverId) {
+        //根据司机id获取司机信息
+        DriverInfo driverInfo = driverInfoMapper.selectById(driverId);
+        DriverLoginVo driverLoginVo=new DriverLoginVo();
+        BeanUtils.copyProperties(driverInfo,driverLoginVo);
+        //判断是否建档人脸识别
+        String faceModelId = driverInfo.getFaceModelId();
+        boolean face = StringUtils.hasText(faceModelId);
+        driverLoginVo.setIsArchiveFace(face);
+        return driverLoginVo;
     }
 }
