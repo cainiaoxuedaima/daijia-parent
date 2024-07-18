@@ -6,10 +6,12 @@ import cn.van.daijia.customer.mapper.CustomerLoginLogMapper;
 import cn.van.daijia.customer.service.CustomerInfoService;
 import cn.van.daijia.model.entity.customer.CustomerInfo;
 import cn.van.daijia.model.entity.customer.CustomerLoginLog;
+import cn.van.daijia.model.vo.customer.CustomerLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,5 +65,17 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
         customerLoginLogMapper.insert(customerLoginLog);
         //5.返回用户id
         return customerInfo.getId();
+    }
+
+    @Override
+    public CustomerLoginVo getCustomerInfo(Long customerId) {
+        //1 根据用户id查询用户信息
+        CustomerInfo customerInfo = customerInfoMapper.selectById(customerId);
+        //2.封装到CustomerLoginVo
+        CustomerLoginVo customerLoginVo = new CustomerLoginVo();
+        BeanUtils.copyProperties(customerInfo,customerLoginVo);//工具类，复制到对象
+        //3 CustomerLoginVo返回
+
+        return null;
     }
 }
