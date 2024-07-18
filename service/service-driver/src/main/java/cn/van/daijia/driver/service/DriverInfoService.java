@@ -5,4 +5,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface DriverInfoService extends IService<DriverInfo> {
 
+    //微信小程序司机端登录
+    Long login(String code);
 }
