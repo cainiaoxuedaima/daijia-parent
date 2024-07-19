@@ -29,7 +29,7 @@ public class DriverController {
     private DriverInfoFeignClient  driverInfoFeignClient;
 
     @Operation(summary="获取司机登录信息")
-    //@VanLogin
+    @VanLogin
     @GetMapping("/getDriverLoginInfo")
     public Result<DriverLoginVo>getDriverLoginInfo(){
         //1. 获取用户id

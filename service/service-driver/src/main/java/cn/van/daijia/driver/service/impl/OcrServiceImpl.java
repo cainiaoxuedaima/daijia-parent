@@ -32,6 +32,7 @@ public class OcrServiceImpl implements OcrService {
 
     /**
      * 身份证认证
+     *
      * @param file
      * @return
      */
@@ -41,17 +42,18 @@ public class OcrServiceImpl implements OcrService {
 
     @Autowired
     private CosService cosService;
+
     //身份证识别
     @Override
     public IdCardOcrVo idCardOcr(MultipartFile file) {
-        try{
+        try {
             //图片转换base64格式字符串
             byte[] base64 = Base64.encodeBase64(file.getBytes());
             String fileBase64 = new String(base64);
 
             // 实例化一个认证对象，入参需要传入腾讯云账户 SecretId 和 SecretKey，此处还需注意密钥对的保密
             Credential cred = new Credential(tencentCloudProperties.getSecretId(),
-                                             tencentCloudProperties.getSecretKey());
+                    tencentCloudProperties.getSecretKey());
             // 实例化一个http选项，可选的，没有特殊需求可以跳过
             HttpProfile httpProfile = new HttpProfile();
             httpProfile.setEndpoint("ocr.tencentcloudapi.com");
@@ -59,7 +61,7 @@ public class OcrServiceImpl implements OcrService {
             ClientProfile clientProfile = new ClientProfile();
             clientProfile.setHttpProfile(httpProfile);
             // 实例化要请求产品的client对象,clientProfile是可选的
-            OcrClient client = new OcrClient(cred,tencentCloudProperties.getRegion(), clientProfile);
+            OcrClient client = new OcrClient(cred, tencentCloudProperties.getRegion(), clientProfile);
             // 实例化一个请求对象,每个接口都会对应一个request对象
             IDCardOCRRequest req = new IDCardOCRRequest();
             //设置文件
@@ -101,7 +103,7 @@ public class OcrServiceImpl implements OcrService {
     //驾驶证识别
     @Override
     public DriverLicenseOcrVo driverLicenseOcr(MultipartFile file) {
-        try{
+        try {
             //图片转换base64格式字符串
             byte[] base64 = Base64.encodeBase64(file.getBytes());
             String fileBase64 = new String(base64);
@@ -143,7 +145,7 @@ public class OcrServiceImpl implements OcrService {
             } else {
                 //驾驶证反面
                 //上传驾驶证反面图片到腾讯云cos
-                CosUploadVo cosUploadVo =  cosService.upload(file, "driverLicense");
+                CosUploadVo cosUploadVo = cosService.upload(file, "driverLicense");
                 driverLicenseOcrVo.setDriverLicenseBackUrl(cosUploadVo.getUrl());
                 driverLicenseOcrVo.setDriverLicenseBackShowUrl(cosUploadVo.getShowUrl());
             }
@@ -153,4 +155,5 @@ public class OcrServiceImpl implements OcrService {
             e.printStackTrace();
             throw new GuiguException(ResultCodeEnum.DATA_ERROR);
         }
+    }
 }
