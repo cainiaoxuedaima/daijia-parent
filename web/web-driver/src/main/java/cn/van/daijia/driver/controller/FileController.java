@@ -21,7 +21,7 @@ public class FileController {
     private CosService cosService;
     //文件上传接口
     @Operation(summary = "上传")
-    @VanLogin
+    //@VanLogin
     @PostMapping("/upload")
     public Result<CosUploadVo> upload(@RequestPart("file") MultipartFile file,
                  @RequestParam(name="path",defaultValue = "auth") String path){
