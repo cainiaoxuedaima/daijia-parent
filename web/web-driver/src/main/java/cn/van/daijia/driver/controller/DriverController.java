@@ -5,6 +5,7 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.driver.client.DriverInfoFeignClient;
 import cn.van.daijia.driver.service.DriverService;
+import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import cn.van.daijia.model.vo.driver.DriverInfoVo;
 import cn.van.daijia.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,5 +47,12 @@ public class DriverController {
     }
 
 
+    @Operation(summary = "获取司机认证信息")
+    @VanLogin
+    @GetMapping("/getDriverAuthInfo")
+    public Result<DriverAuthInfoVo>getDriverAuthInfo(){
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.getDriverAuthInfo(driverId));
+    }
 }
 
