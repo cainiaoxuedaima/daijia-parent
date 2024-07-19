@@ -1,6 +1,7 @@
 package cn.van.daijia.driver.service;
 
 import cn.van.daijia.model.entity.driver.DriverInfo;
+import cn.van.daijia.model.form.driver.DriverFaceModelForm;
 import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import cn.van.daijia.model.vo.driver.DriverLoginVo;
@@ -18,4 +19,7 @@ public interface DriverInfoService extends IService<DriverInfo> {
 
     //更新司机认证信息
     Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
+
+    //创建司机人脸模型
+    Boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm);
 }

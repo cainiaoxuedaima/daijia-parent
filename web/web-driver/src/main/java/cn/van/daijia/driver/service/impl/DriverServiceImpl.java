@@ -6,6 +6,7 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.result.ResultCodeEnum;
 import cn.van.daijia.driver.client.DriverInfoFeignClient;
 import cn.van.daijia.driver.service.DriverService;
+import cn.van.daijia.model.form.driver.DriverFaceModelForm;
 import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import lombok.extern.slf4j.Slf4j;
@@ -69,5 +70,12 @@ public class DriverServiceImpl implements DriverService {
         Result<Boolean> booleanResult = driverInfoFeignClient.updateDriverAuthInfo(updateDriverAuthInfoForm);
         Boolean data = booleanResult.getData();
         return data;
+    }
+
+    //创建司机人脸模型
+    @Override
+    public Boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm) {
+        Result<Boolean> booleanResult = driverInfoFeignClient.creatDriverFaceModel(driverFaceModelForm);
+        return booleanResult.getData();
     }
 }

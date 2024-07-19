@@ -5,6 +5,7 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.driver.client.DriverInfoFeignClient;
 import cn.van.daijia.driver.service.DriverService;
+import cn.van.daijia.model.form.driver.DriverFaceModelForm;
 import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import cn.van.daijia.model.vo.driver.DriverInfoVo;
@@ -59,6 +60,13 @@ public class DriverController {
     public Result<Boolean>updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm){
         updateDriverAuthInfoForm.setDriverId(AuthContextHolder.getUserId());
         return Result.ok(driverService.updateDriverAuthInfo(updateDriverAuthInfoForm));
+    }
+    @Operation(summary = "创建司机人脸模型")
+    @VanLogin
+    @PostMapping("/creatDriverFaceModel")
+    public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        return Result.ok(driverService.creatDriverFaceModel(driverFaceModelForm));
     }
 }
 

@@ -20,14 +20,12 @@
         <dependency>
             <groupId>com.qcloud</groupId>
             <artifactId>cos_api</artifactId>
-            <version>5.6.213</version>
         </dependency>
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
-            <artifactId>tencentcloud-sdk-java-ocr</artifactId>
-            <version>3.1.829</version>
-            <scope>compile</scope>
+            <artifactId>tencentcloud-sdk-java</artifactId>
         </dependency>
+
     </dependencies>
 
     <build>
