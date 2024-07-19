@@ -3,6 +3,7 @@ package cn.van.daijia.driver.controller;
 import cn.van.daijia.common.login.VanLogin;
 import cn.van.daijia.common.result.Result;
 import cn.van.daijia.driver.service.OcrService;
+import cn.van.daijia.model.vo.driver.DriverLicenseOcrVo;
 import cn.van.daijia.model.vo.driver.IdCardOcrVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,5 +31,14 @@ public class OcrController {
     public Result<IdCardOcrVo>uploadDriverLicenseOcr(@RequestPart("file")MultipartFile file){
         return Result.ok(ocrService.idCardOcr(file));
     }
+
+    @Operation(summary = "驾驶证识别")
+    @VanLogin
+    @PostMapping("/driverLicenseOcr")
+    public Result<DriverLicenseOcrVo> driverLicenseOcr(@RequestPart("file") MultipartFile file) {
+        return Result.ok(ocrService.driverLicenseOcr(file));
+    }
+
+
 }
 
