@@ -15,6 +15,7 @@ import cn.van.daijia.model.entity.driver.DriverAccount;
 import cn.van.daijia.model.entity.driver.DriverInfo;
 import cn.van.daijia.model.entity.driver.DriverLoginLog;
 import cn.van.daijia.model.entity.driver.DriverSet;
+import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import cn.van.daijia.model.vo.driver.DriverLoginVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -24,6 +25,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -137,5 +139,14 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverAuthInfoVo.setDriverLicenseHandShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseHandUrl()));
         //返回vo对象
         return driverAuthInfoVo;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        DriverInfo driverInfo = new DriverInfo();
+        driverInfo.setId(updateDriverAuthInfoForm.getDriverId());
+        BeanUtils.copyProperties(updateDriverAuthInfoForm,driverInfo);
+        return this.updateById(driverInfo);
     }
 }

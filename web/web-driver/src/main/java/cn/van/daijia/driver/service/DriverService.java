@@ -1,5 +1,6 @@
 package cn.van.daijia.driver.service;
 
+import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 
 public interface DriverService {
@@ -8,4 +9,6 @@ public interface DriverService {
     String login(String code);
     //获取司机认证信息
     DriverAuthInfoVo getDriverAuthInfo(Long driverId);
+    //修改司机认证信息
+    Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
 }

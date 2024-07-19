@@ -1,12 +1,15 @@
 package cn.van.daijia.driver.client;
 
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
 import cn.van.daijia.model.vo.driver.DriverInfoVo;
 import cn.van.daijia.model.vo.driver.DriverLoginVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(value = "service-driver")
 public interface DriverInfoFeignClient {
@@ -24,5 +27,8 @@ public interface DriverInfoFeignClient {
 
     @GetMapping("/driver/info/getDriverAuthInfo/{driverId}")
     Result<DriverAuthInfoVo>getDriverAuthInfo(@PathVariable("driverId")Long driverId);
+
+    @PostMapping("/driver/info/updateDriverAuthInfo")
+    Result<Boolean>updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
 
 }
