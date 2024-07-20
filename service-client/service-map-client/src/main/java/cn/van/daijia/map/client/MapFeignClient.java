@@ -17,5 +17,4 @@ public interface MapFeignClient {
      */
     @PostMapping("/map/calculateDrivingLine")
     Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm);
-
 }

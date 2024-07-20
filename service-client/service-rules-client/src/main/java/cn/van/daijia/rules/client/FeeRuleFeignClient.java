@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(value = "service-rules")
 public interface FeeRuleFeignClient {
+
     /**
      * 计算订单费用
      * @param calculateOrderFeeForm
@@ -16,5 +17,4 @@ public interface FeeRuleFeignClient {
      */
     @PostMapping("/rules/fee/calculateOrderFee")
     Result<FeeRuleResponseVo> calculateOrderFee(@RequestBody FeeRuleRequestForm calculateOrderFeeForm);
-
 }

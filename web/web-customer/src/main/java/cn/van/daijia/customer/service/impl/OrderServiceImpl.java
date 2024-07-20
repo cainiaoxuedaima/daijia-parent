@@ -27,15 +27,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private FeeRuleFeignClient feeRuleFeignClient;
+    //预估订单数据
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
-        //获取驾驶路线
+        //获取驾驶线路
         CalculateDrivingLineForm calculateDrivingLineForm = new CalculateDrivingLineForm();
-        BeanUtils.copyProperties(expectOrderForm, calculateDrivingLineForm);
+        BeanUtils.copyProperties(expectOrderForm,calculateDrivingLineForm);
         Result<DrivingLineVo> drivingLineVoResult = mapFeignClient.calculateDrivingLine(calculateDrivingLineForm);
-
         DrivingLineVo drivingLineVo = drivingLineVoResult.getData();
-        //获取订单费用信息
+
+        //获取订单费用
         FeeRuleRequestForm calculateOrderFeeForm = new FeeRuleRequestForm();
         calculateOrderFeeForm.setDistance(drivingLineVo.getDistance());
         calculateOrderFeeForm.setStartTime(new Date());

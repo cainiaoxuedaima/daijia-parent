@@ -24,12 +24,13 @@ public class MapController {
     @Autowired
     private MapService mapService;
 
-    @Operation(summary ="计算驾驶路线")
+
+    @Operation(summary = "计算驾驶线路")
     @PostMapping("/calculateDrivingLine")
-    public Result<DrivingLineVo>calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm){
-
-        return Result.ok(mapService.calculateDrivingLine(calculateDrivingLineForm));
-
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm
+                                                              calculateDrivingLineForm) {
+        DrivingLineVo drivingLineVo = mapService.calculateDrivingLine(calculateDrivingLineForm);
+        return Result.ok(drivingLineVo);
     }
 
 }
