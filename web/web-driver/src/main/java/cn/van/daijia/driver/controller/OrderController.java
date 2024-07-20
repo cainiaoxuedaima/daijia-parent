@@ -18,15 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
 
-    //TODO 后续完善，目前假设乘客当前没有订单
-    @Operation(summary = "查找客户端当前订单")
-    @VanLogin
-    @GetMapping("/searchCustomerCurrentOrder")
-    public Result<CurrentOrderInfoVo>searchCustomerCurrentOrder(){
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
-    }
+
 
 }
 
