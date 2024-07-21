@@ -2,8 +2,10 @@ package cn.van.daijia.customer.controller;
 
 import cn.van.daijia.common.login.VanLogin;
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.customer.service.OrderService;
 import cn.van.daijia.model.form.customer.ExpectOrderForm;
+import cn.van.daijia.model.form.customer.SubmitOrderForm;
 import cn.van.daijia.model.vo.customer.ExpectOrderVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -39,5 +41,12 @@ public class OrderController {
         return Result.ok(orderService.expectOrder(expectOrderForm));
     }
 
+    @Operation(summary = "乘客下单")
+    @VanLogin
+    @PostMapping("/submitOrder")
+    public Result<Long> submitOrder(@RequestBody SubmitOrderForm submitOrderForm) {
+        submitOrderForm.setCustomerId(AuthContextHolder.getUserId());
+        return Result.ok(orderService.submitOrder(submitOrderForm));
+    }
 }
 
