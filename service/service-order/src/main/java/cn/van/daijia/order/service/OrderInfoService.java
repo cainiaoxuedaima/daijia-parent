@@ -8,4 +8,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
 
     //保存订单信息
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
+    //获取订单状态
+    Integer getOrderStatus(Long orderId);
 }

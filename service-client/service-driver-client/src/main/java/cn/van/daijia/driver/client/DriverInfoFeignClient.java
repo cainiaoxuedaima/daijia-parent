@@ -1,6 +1,7 @@
 package cn.van.daijia.driver.client;
 
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.model.entity.driver.DriverSet;
 import cn.van.daijia.model.form.driver.DriverFaceModelForm;
 import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
@@ -23,15 +24,29 @@ public interface DriverInfoFeignClient {
     Result<Long> login(@PathVariable("code") String code);
 
 
+    /**
+     * 获取司机的登录信息
+     * @param driverId
+     * @return
+     */
     @GetMapping("/driver/info/getDriverLoginInfo/{driverId}")
     Result<DriverLoginVo>getDriverLoginInfo(@PathVariable("driverId") Long driverId);
 
+    /**
+     * 获取司机认证信息
+     * @param driverId
+     * @return
+     */
     @GetMapping("/driver/info/getDriverAuthInfo/{driverId}")
     Result<DriverAuthInfoVo>getDriverAuthInfo(@PathVariable("driverId")Long driverId);
 
+    /**
+     * 修改司机认证信息
+     * @param updateDriverAuthInfoForm
+     * @return
+     */
     @PostMapping("/driver/info/updateDriverAuthInfo")
     Result<Boolean>updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
-
 
     /**
      * 创建司机人脸模型
@@ -40,4 +55,7 @@ public interface DriverInfoFeignClient {
      */
     @PostMapping("/driver/info/creatDriverFaceModel")
     Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm);
+
+    @GetMapping("/driver/info/getDriverSet/{driverId}")
+    Result<DriverSet>getDriverSet(@PathVariable("driverId") Long driverId);
 }

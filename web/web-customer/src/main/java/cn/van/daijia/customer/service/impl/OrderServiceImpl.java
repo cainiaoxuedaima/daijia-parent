@@ -84,4 +84,12 @@ public class OrderServiceImpl implements OrderService {
         //todo 查询附近可以接单的司机
         return orderId;
     }
+
+    //获取订单状态
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        Result<Integer> orderStatus = orderInfoFeignClient.getOrderStatus(orderId);
+
+        return orderStatus.getData();
+    }
 }

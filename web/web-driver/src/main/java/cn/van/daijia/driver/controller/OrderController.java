@@ -2,11 +2,14 @@ package cn.van.daijia.driver.controller;
 
 import cn.van.daijia.common.login.VanLogin;
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.driver.service.OrderService;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class OrderController {
 
+    @Autowired
+    private OrderService orderService;
 
-
+    @Operation(summary = "根据id查询订单")
+    @VanLogin
+    @GetMapping("/getOrderStatus/{orderId}")
+    public Result<Integer>getOrderStatus(@PathVariable Long orderId){
+        return Result.ok(orderService.getOrderStatus(orderId));
+    }
 
 }
 
