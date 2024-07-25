@@ -1,18 +1,11 @@
 package cn.van.daijia.order.testLock;
 
-import cn.van.daijia.common.config.redisson.RedissonConfig;
 import io.micrometer.common.util.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
-
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author：fan
@@ -92,7 +85,7 @@ public class TestServiceImpl implements TestService{
 
 
     @Override
-    public void testLock() throws InterruptedException {
+    public void testLock()  {
         //1 通过redisson创建锁对象
         RLock lock = redissonClient.getLock("lock1");
 

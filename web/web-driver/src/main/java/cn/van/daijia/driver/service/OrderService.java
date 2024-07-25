@@ -1,6 +1,8 @@
 package cn.van.daijia.driver.service;
 
+import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.NewOrderDataVo;
+import cn.van.daijia.model.vo.order.OrderInfoVo;
 
 import java.util.List;
 
@@ -15,4 +17,10 @@ public interface OrderService {
 
     // 司机抢单
     Boolean robNewOrder(Long driverId, Long orderId);
+
+    //司机端查找当前订单
+    CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId);
+
+    //获取订单账单详细信息
+    OrderInfoVo getOrderInfo(Long orderId, Long driverId);
 }

@@ -1,9 +1,12 @@
 package cn.van.daijia.customer.service.impl;
 
+import cn.van.daijia.common.execption.GuiguException;
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.common.result.ResultCodeEnum;
 import cn.van.daijia.customer.service.OrderService;
 import cn.van.daijia.dispatch.client.NewOrderFeignClient;
 import cn.van.daijia.map.client.MapFeignClient;
+import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.form.customer.ExpectOrderForm;
 import cn.van.daijia.model.form.customer.SubmitOrderForm;
 import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
@@ -12,9 +15,12 @@ import cn.van.daijia.model.form.rules.FeeRuleRequestForm;
 import cn.van.daijia.model.vo.customer.ExpectOrderVo;
 import cn.van.daijia.model.vo.dispatch.NewOrderTaskVo;
 import cn.van.daijia.model.vo.map.DrivingLineVo;
+import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
+import cn.van.daijia.model.vo.order.OrderInfoVo;
 import cn.van.daijia.model.vo.rules.FeeRuleResponseVo;
 import cn.van.daijia.order.client.OrderInfoFeignClient;
 import cn.van.daijia.rules.client.FeeRuleFeignClient;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,6 +138,32 @@ public class OrderServiceImpl implements OrderService {
         Result<Integer> orderStatus = orderInfoFeignClient.getOrderStatus(orderId);
 
         return orderStatus.getData();
+    }
+
+    /**
+     * 乘客端查找当前订单
+     * @param customerId
+     * @return
+     */
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        return orderInfoFeignClient.searchCustomerCurrentOrder(customerId).getData();
+    }
+
+
+    //获取订单信息
+    @Override
+    public OrderInfoVo getOrderInfo(Long orderId, Long customerId) {
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        //判断
+        if(orderInfo.getCustomerId()!=customerId){
+            throw new GuiguException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        OrderInfoVo orderInfoVo=new OrderInfoVo();
+        orderInfoVo.setOrderId(orderId);
+        BeanUtils.copyProperties(orderInfo,orderInfoVo);
+        return orderInfoVo;
     }
 
 

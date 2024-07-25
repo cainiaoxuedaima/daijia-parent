@@ -8,6 +8,7 @@ import cn.van.daijia.model.form.customer.ExpectOrderForm;
 import cn.van.daijia.model.form.customer.SubmitOrderForm;
 import cn.van.daijia.model.vo.customer.ExpectOrderVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
+import cn.van.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -22,14 +23,13 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
 
-    //TODO 后续完善，目前假设乘客当前没有订单
-    @Operation(summary = "查找客户端当前订单")
+
+    @Operation(summary = "乘客端查找当前订单")
     @VanLogin
     @GetMapping("/searchCustomerCurrentOrder")
-    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder(){
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
     }
 
     @Autowired
@@ -55,6 +55,14 @@ public class OrderController {
     @GetMapping("/getOrderStatus/{orderId}")
     public Result<Integer>getOrderStatus(@PathVariable Long orderId){
         return Result.ok(orderService.getOrderStatus(orderId));
+    }
+
+    @Operation(summary = "获取订单信息")
+    @VanLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, customerId));
     }
 
 }

@@ -1,7 +1,9 @@
 package cn.van.daijia.order.controller;
 
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.form.order.OrderInfoForm;
+import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,6 +38,23 @@ public class OrderInfoController {
         return Result.ok(orderInfoService.robNewOrder(driverId,orderId));
     }
 
+    @Operation(summary = "乘客端查找当前订单")
+    @GetMapping("/searchCustomerCurrentOrder/{customerId}")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder(@PathVariable Long customerId) {
+        return Result.ok(orderInfoService.searchCustomerCurrentOrder(customerId));
+    }
+
+    @Operation(summary = "司机端查找当前订单")
+    @GetMapping("/searchDriverCurrentOrder/{driverId}")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder(@PathVariable Long driverId) {
+        return Result.ok(orderInfoService.searchDriverCurrentOrder(driverId));
+    }
+    //根据订单id获取订单信息
+    @Operation(summary = "根据订单id获取订单信息")
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfo> getOrderInfo(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getById(orderId));
+    }
 
 }
 

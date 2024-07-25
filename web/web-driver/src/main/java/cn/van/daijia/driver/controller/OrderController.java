@@ -6,6 +6,7 @@ import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.driver.service.OrderService;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.NewOrderDataVo;
+import cn.van.daijia.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,21 @@ public class OrderController {
         return Result.ok(orderService.robNewOrder(driverId, orderId));
     }
 
+    @Operation(summary = "司机端查找当前订单")
+    @VanLogin
+    @GetMapping("/searchDriverCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchDriverCurrentOrder(driverId));
+    }
 
+    @Operation(summary = "获取订单账单详细信息")
+    @VanLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, driverId));
+    }
 
 }
 

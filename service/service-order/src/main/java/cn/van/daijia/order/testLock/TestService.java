@@ -6,5 +6,5 @@ package cn.van.daijia.order.testLock;
  * @DataTime:2024/7/25 15:29
  */
 public interface TestService {
-    public void testLock() throws InterruptedException;
+    public void testLock() ;
 }
