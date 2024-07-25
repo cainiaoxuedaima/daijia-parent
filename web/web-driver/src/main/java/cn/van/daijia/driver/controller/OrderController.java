@@ -48,7 +48,6 @@ public class OrderController {
 
     /**
      * 司机抢单
-     * @param driverId
      * @param orderId
      * @return
      */
@@ -59,6 +58,8 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.robNewOrder(driverId, orderId));
     }
+
+
 
 }
 
