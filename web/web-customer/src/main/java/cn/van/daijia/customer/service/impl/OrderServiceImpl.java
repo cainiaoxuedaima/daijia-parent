@@ -41,21 +41,21 @@ public class OrderServiceImpl implements OrderService {
     private NewOrderFeignClient newOrderFeignClient;
 
     //预估订单数据
+    //预估订单数据
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
         //获取驾驶线路
         CalculateDrivingLineForm calculateDrivingLineForm = new CalculateDrivingLineForm();
         BeanUtils.copyProperties(expectOrderForm,calculateDrivingLineForm);
         Result<DrivingLineVo> drivingLineVoResult = mapFeignClient.calculateDrivingLine(calculateDrivingLineForm);
-        DrivingLineVo drivingLineVo = drivingLineVoResult.getData();
-        if(drivingLineVo==null){
-            return null;
+        if (drivingLineVoResult == null || drivingLineVoResult.getCode() != 200) {
+            // 处理异常或返回错误响应
+            throw new RuntimeException("计算驾驶线路失败3");
         }
+        DrivingLineVo drivingLineVo = drivingLineVoResult.getData();
+
         //获取订单费用
         FeeRuleRequestForm calculateOrderFeeForm = new FeeRuleRequestForm();
-        if(drivingLineVo.getDistance() == null){
-            drivingLineVo.setDistance(BigDecimal.valueOf(0));
-        }
         calculateOrderFeeForm.setDistance(drivingLineVo.getDistance());
         calculateOrderFeeForm.setStartTime(new Date());
         calculateOrderFeeForm.setWaitMinute(0);
@@ -69,6 +69,11 @@ public class OrderServiceImpl implements OrderService {
         return expectOrderVo;
     }
 
+    /**
+     * 提交订单
+     * @param submitOrderForm
+     * @return
+     */
     @Override
     public Long submitOrder(SubmitOrderForm submitOrderForm) {
         //1 重新计算驾驶线路
@@ -77,12 +82,13 @@ public class OrderServiceImpl implements OrderService {
         Result<DrivingLineVo> drivingLineVoResult = mapFeignClient.calculateDrivingLine(calculateDrivingLineForm);
         DrivingLineVo drivingLineVo = drivingLineVoResult.getData();
         if(drivingLineVo==null){
-            return null;
+           throw new RuntimeException("计算驾驶线路失败1");
         }
         //获取订单费用
         FeeRuleRequestForm calculateOrderFeeForm = new FeeRuleRequestForm();
         if(drivingLineVo.getDistance() == null){
             drivingLineVo.setDistance(BigDecimal.valueOf(0));
+            throw new RuntimeException("计算驾驶线路失败2");
         }
         calculateOrderFeeForm.setDistance(drivingLineVo.getDistance());
         calculateOrderFeeForm.setStartTime(new Date());

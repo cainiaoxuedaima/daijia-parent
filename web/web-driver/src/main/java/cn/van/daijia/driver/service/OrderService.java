@@ -12,4 +12,7 @@ public interface OrderService {
 
     // 添加并开始新订单任务调度
     List<NewOrderDataVo> findNewOrderQueueData(Long driverId);
+
+    // 司机抢单
+    Boolean robNewOrder(Long driverId, Long orderId);
 }

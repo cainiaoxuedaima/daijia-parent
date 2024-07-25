@@ -1,6 +1,8 @@
 package cn.van.daijia.order.service.impl;
 
+import cn.van.daijia.common.constant.RedisConstant;
 import cn.van.daijia.common.execption.GuiguException;
+import cn.van.daijia.common.result.ResultCodeEnum;
 import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.entity.order.OrderStatusLog;
 import cn.van.daijia.model.enums.OrderStatus;
@@ -12,10 +14,12 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -25,8 +29,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private OrderStatusLogMapper orderStatusLogMapper;
 
     @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
     private OrderInfoMapper orderInfoMapper;
-    //保存订单信息
+    //乘客下单
     @Override
     public Long saveOrderInfo(OrderInfoForm orderInfoForm) {
         //
@@ -42,6 +49,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         //记录日志
         this.log(orderInfo.getId(),orderInfo.getStatus());
 
+        //向redis添加标识
+        //接单标识，标识不存在了说明不再等待接单状态了
+        redisTemplate.opsForValue().set(RedisConstant.ORDER_ACCEPT_MARK,
+                "0",
+                RedisConstant.ORDER_ACCEPT_MARK_EXPIRES_TIME,
+                TimeUnit.MINUTES);
 
         return orderInfo.getId();
     }
@@ -64,6 +77,39 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             return OrderStatus.NULL_ORDER.getStatus();
         }
         return orderInfo.getStatus();
+    }
+
+
+    //司机抢单
+    @Override
+    public Boolean robNewOrder(Long driverId, Long orderId) {
+        //判断订单是否存在,通过redis，减少数据库压力
+        if(!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK)){
+            //抢单失败
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+
+        }
+        //司机抢单
+        //修改order_info表订单状态值2：已经接单
+        //修改条件：根据订单id+司机id+司机接单时间
+        LambdaQueryWrapper<OrderInfo>wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,orderId);
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+        //设置
+        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+        orderInfo.setDriverId(driverId);
+        orderInfo.setAcceptTime(new Date());
+        //调用方法修改
+        int rows = orderInfoMapper.updateById(orderInfo);
+        if(rows!=1){
+            throw new GuiguException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        //删除抢单标识
+        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
+
+
+        return true;
     }
 
     public void log(Long orderId, Integer status) {

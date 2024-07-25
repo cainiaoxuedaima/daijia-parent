@@ -10,4 +10,7 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
     //获取订单状态
     Integer getOrderStatus(Long orderId);
+
+    //司机抢单
+    Boolean robNewOrder(Long driverId, Long orderId);
 }

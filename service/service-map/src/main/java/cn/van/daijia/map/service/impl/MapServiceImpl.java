@@ -42,9 +42,9 @@ public class MapServiceImpl implements MapService {
         Map<String,String> map = new HashMap();
         //开始位置
         // 经纬度：比如 北纬40 东京116
-        map.put("from",calculateDrivingLineForm.getStartPointLatitude()+","+calculateDrivingLineForm.getStartPointLongitude());
+        map.put("from",calculateDrivingLineForm.getStartPointLongitude()+","+calculateDrivingLineForm.getStartPointLatitude());
         //结束位置
-        map.put("to",calculateDrivingLineForm.getEndPointLatitude()+","+calculateDrivingLineForm.getEndPointLongitude());
+        map.put("to",calculateDrivingLineForm.getEndPointLongitude()+","+calculateDrivingLineForm.getEndPointLatitude());
         //key
         map.put("key",key);
 
