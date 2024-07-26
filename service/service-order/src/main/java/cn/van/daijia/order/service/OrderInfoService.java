@@ -2,6 +2,8 @@ package cn.van.daijia.order.service;
 
 import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.form.order.OrderInfoForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -20,4 +22,13 @@ public interface OrderInfoService extends IService<OrderInfo> {
 
     //司机端查找当前订单
     CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId);
+
+    //司机到达起始点
+    Boolean driverArriveStartLocation(Long orderId, Long driverId);
+
+    //更新代驾车辆信息
+    Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm);
+
+    //开始代驾服务
+    Boolean startDriver(StartDriveForm startDriveForm);
 }

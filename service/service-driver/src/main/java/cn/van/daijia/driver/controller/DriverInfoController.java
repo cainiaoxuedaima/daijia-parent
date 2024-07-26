@@ -6,6 +6,7 @@ import cn.van.daijia.model.entity.driver.DriverSet;
 import cn.van.daijia.model.form.driver.DriverFaceModelForm;
 import cn.van.daijia.model.form.driver.UpdateDriverAuthInfoForm;
 import cn.van.daijia.model.vo.driver.DriverAuthInfoVo;
+import cn.van.daijia.model.vo.driver.DriverInfoVo;
 import cn.van.daijia.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,6 +65,7 @@ public class DriverInfoController {
         return Result.ok(isSuccess);
     }
 
+
     @Operation(summary = "获取司机设置信息")
     @GetMapping("/getDriverSet/{driverId}")
     public Result<DriverSet> getDriverSet(@PathVariable Long driverId){
@@ -93,6 +95,14 @@ public class DriverInfoController {
     @GetMapping("/updateServiceStatus/{driverId}/{status}")
     public Result<Boolean> updateServiceStatus(@PathVariable Long driverId, @PathVariable Integer status) {
         return Result.ok(driverInfoService.updateServiceStatus(driverId, status));
+    }
+
+    //获取司机基本信息
+    @Operation(summary = "获取司机基本信息")
+    @GetMapping("/getDriverInfo/{driverId}")
+    public Result<DriverInfoVo>getDriverInfo(@PathVariable Long driverId){
+        return Result.ok(driverInfoService.getDriverInfoOrder(driverId));
+
     }
 
 }

@@ -1,13 +1,40 @@
 package cn.van.daijia.driver.service.impl;
 
+import cn.van.daijia.driver.service.FileService;
 import cn.van.daijia.driver.service.MonitorService;
+import cn.van.daijia.model.entity.order.OrderMonitorRecord;
+import cn.van.daijia.model.form.order.OrderMonitorForm;
+import cn.van.daijia.order.client.OrderMonitorFeignClient;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class MonitorServiceImpl implements MonitorService {
 
+    @Autowired
+    private FileService fileService;
 
+    @Autowired
+    private OrderMonitorFeignClient orderMonitorFeignClient;
+
+    /**
+     * 上传录音
+     * @param file
+     * @param orderMonitorForm
+     * @return
+     */
+    @Override
+    public Boolean upload(MultipartFile file, OrderMonitorForm orderMonitorForm) {
+        String url = fileService.upload(file);
+        OrderMonitorRecord orderMonitorRecord=new OrderMonitorRecord();
+        orderMonitorRecord.setOrderId(orderMonitorForm.getOrderId());
+        orderMonitorRecord.setFileUrl(url);
+        orderMonitorRecord.setContent(orderMonitorForm.getContent());
+        orderMonitorFeignClient.saveMonitorRecord(orderMonitorRecord);
+        return true;
+    }
 }

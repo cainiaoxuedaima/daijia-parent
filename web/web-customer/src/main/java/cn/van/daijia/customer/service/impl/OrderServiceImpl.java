@@ -5,6 +5,8 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.result.ResultCodeEnum;
 import cn.van.daijia.customer.service.OrderService;
 import cn.van.daijia.dispatch.client.NewOrderFeignClient;
+import cn.van.daijia.driver.client.DriverInfoFeignClient;
+import cn.van.daijia.map.client.LocationFeignClient;
 import cn.van.daijia.map.client.MapFeignClient;
 import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.form.customer.ExpectOrderForm;
@@ -14,7 +16,10 @@ import cn.van.daijia.model.form.order.OrderInfoForm;
 import cn.van.daijia.model.form.rules.FeeRuleRequestForm;
 import cn.van.daijia.model.vo.customer.ExpectOrderVo;
 import cn.van.daijia.model.vo.dispatch.NewOrderTaskVo;
+import cn.van.daijia.model.vo.driver.DriverInfoVo;
 import cn.van.daijia.model.vo.map.DrivingLineVo;
+import cn.van.daijia.model.vo.map.OrderLocationVo;
+import cn.van.daijia.model.vo.map.OrderServiceLastLocationVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.OrderInfoVo;
 import cn.van.daijia.model.vo.rules.FeeRuleResponseVo;
@@ -46,6 +51,11 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private NewOrderFeignClient newOrderFeignClient;
 
+    @Autowired
+    private DriverInfoFeignClient driverInfoFeignClient;
+
+    @Autowired
+    private LocationFeignClient locationFeignClient;
     //预估订单数据
     //预估订单数据
     @Override
@@ -164,6 +174,32 @@ public class OrderServiceImpl implements OrderService {
         orderInfoVo.setOrderId(orderId);
         BeanUtils.copyProperties(orderInfo,orderInfoVo);
         return orderInfoVo;
+    }
+
+    @Override
+    public DriverInfoVo getDriverInfo(Long orderId, Long customerId) {
+        //根据订单id获取订单信息
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if(orderInfo.getCustomerId() != customerId) {
+            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+        }
+        return driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
+    }
+
+    /**
+     * 计算最佳驾驶线路
+     * @param calculateDrivingLineForm
+     * @return
+     */
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
+    }
+
+    //代驾服务：获取订单服务最后一个位置信息
+    @Override
+    public OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId) {
+        return locationFeignClient.getOrderServiceLastLocation(orderId).getData();
     }
 
 

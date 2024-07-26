@@ -4,8 +4,15 @@ import cn.van.daijia.common.execption.GuiguException;
 import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.result.ResultCodeEnum;
 import cn.van.daijia.dispatch.client.NewOrderFeignClient;
+import cn.van.daijia.driver.client.DriverInfoFeignClient;
 import cn.van.daijia.driver.service.OrderService;
+import cn.van.daijia.map.client.MapFeignClient;
 import cn.van.daijia.model.entity.order.OrderInfo;
+import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.driver.DriverInfoVo;
+import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.NewOrderDataVo;
 import cn.van.daijia.model.vo.order.OrderInfoVo;
@@ -25,6 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderInfoFeignClient orderInfoFeignClient;
+
+    @Autowired
+    private MapFeignClient mapFeignClient;
     //获取订单状态
     @Override
     public Integer getOrderStatus(Long orderId) {
@@ -80,4 +90,40 @@ public class OrderServiceImpl implements OrderService {
         BeanUtils.copyProperties(orderInfo,orderInfoVo);
         return orderInfoVo;
     }
+
+    //计算最佳驾驶路线
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
+    }
+
+    /**
+     * 司机到达代驾起始地点
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        return orderInfoFeignClient.driverArriveStartLocation(orderId, driverId).getData();
+    }
+
+    /**
+     * 更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+
+        return orderInfoFeignClient.updateOrderCart(updateOrderCartForm).getData();
+    }
+
+    //开始代驾服务
+    @Override
+    public Boolean startDrive(StartDriveForm startDriveForm) {
+        return orderInfoFeignClient.startDrive(startDriveForm).getData();
+    }
+
+
 }

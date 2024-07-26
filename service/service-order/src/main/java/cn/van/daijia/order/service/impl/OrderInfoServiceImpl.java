@@ -7,6 +7,8 @@ import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.entity.order.OrderStatusLog;
 import cn.van.daijia.model.enums.OrderStatus;
 import cn.van.daijia.model.form.order.OrderInfoForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.order.mapper.OrderStatusLogMapper;
 import cn.van.daijia.order.service.OrderInfoService;
@@ -248,6 +250,75 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             currentOrderInfoVo.setIsHasCurrentOrder(false);
         }
         return currentOrderInfoVo;
+    }
+
+    /**
+     * 司机到达起始点
+     * @param orderId
+     * @param driverId
+     * @return
+     */
+    @Override
+    public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        //更新订单状态和到达时间，条件：orderId+driverId
+        LambdaQueryWrapper<OrderInfo>wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,orderId);
+        wrapper.eq(OrderInfo::getDriverId,driverId);
+
+        OrderInfo orderInfo=new OrderInfo();
+        orderInfo.setStatus(OrderStatus.DRIVER_ARRIVED.getStatus());
+        orderInfo.setArriveTime(new Date());
+
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows==1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+    }
+
+
+    /**
+     * 更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+       LambdaQueryWrapper<OrderInfo>wrapper=new LambdaQueryWrapper<>();
+       wrapper.eq(OrderInfo::getId,updateOrderCartForm.getOrderId());
+       wrapper.eq(OrderInfo::getDriverId,updateOrderCartForm.getDriverId());
+       OrderInfo orderInfo=new OrderInfo();
+       BeanUtils.copyProperties(updateOrderCartForm,orderInfo);
+       orderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows==1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+    }
+
+    /**
+     * 开始代驾服务
+     * @param startDriveForm
+     * @return
+     */
+    @Override
+    public Boolean startDriver(StartDriveForm startDriveForm) {
+        //根据订单id + 司机id 更新订单状态和开始代价时间
+        LambdaQueryWrapper<OrderInfo>wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,startDriveForm.getOrderId());
+        wrapper.eq(OrderInfo::getDriverId,startDriveForm.getDriverId());
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setStatus(OrderStatus.START_SERVICE.getStatus());
+        orderInfo.setStartServiceTime(new Date());
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows==1){
+            return true;
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
     }
 
     public void log(Long orderId, Integer status) {

@@ -93,12 +93,6 @@
                 <version>${fastjson.version}</version>
             </dependency>
 
-            <!-- 腾讯云VOD -->
-            <dependency>
-                <groupId>com.qcloud</groupId>
-                <artifactId>vod_api</artifactId>
-                <version>${vod_api.version}</version>
-            </dependency>
 
             <!-- minio -->
             <dependency>
@@ -124,7 +118,7 @@
             <dependency>
                 <groupId>com.github.wechatpay-apiv3</groupId>
                 <artifactId>wechatpay-java</artifactId>
-                <version>${wxpay.version}</version>
+
             </dependency>
 
             <!-- redisson -->
@@ -160,7 +154,7 @@
             <dependency>
                 <groupId>io.seata</groupId>
                 <artifactId>seata-all</artifactId>
-                <version>${seata.version}</version>
+
             </dependency>
 
             <!-- drools lib -->

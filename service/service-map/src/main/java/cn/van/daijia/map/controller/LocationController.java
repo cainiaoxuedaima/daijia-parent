@@ -4,7 +4,10 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.map.service.LocationService;
 import cn.van.daijia.model.form.map.SearchNearByDriverForm;
 import cn.van.daijia.model.form.map.UpdateDriverLocationForm;
+import cn.van.daijia.model.form.map.UpdateOrderLocationForm;
 import cn.van.daijia.model.vo.map.NearByDriverVo;
+import cn.van.daijia.model.vo.map.OrderLocationVo;
+import cn.van.daijia.model.vo.map.OrderServiceLastLocationVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +52,27 @@ public class LocationController {
     public Result<List<NearByDriverVo>>searchNearByDriver(@RequestBody SearchNearByDriverForm searchNearByDriverForm){
         return Result.ok(locationService.searchNearByDriver(searchNearByDriverForm));
     }
+
+    @Operation(summary = "司机赶往代驾起始点：更新订单地址到缓存")
+    @PostMapping("/updateOrderLocationToCache")
+    public Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm) {
+        return Result.ok(locationService.updateOrderLocationToCache(updateOrderLocationForm));
+    }
+
+    @Operation(summary = "司机赶往代驾起始点：获取订单经纬度位置")
+    @GetMapping("/getCacheOrderLocation/{orderId}")
+    public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
+        return Result.ok(locationService.getCacheOrderLocation(orderId));
+    }
+
+    @Operation(summary = "代驾服务：获取订单服务最后一个位置信息")
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable Long orderId) {
+        return Result.ok(locationService.getOrderServiceLastLocation(orderId));
+    }
+
+
+
+
 }
 

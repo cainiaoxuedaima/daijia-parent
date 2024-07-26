@@ -30,7 +30,13 @@
 			<groupId>io.minio</groupId>
 			<artifactId>minio</artifactId>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>com.atguigu.daijia</groupId>
+            <artifactId>service-map</artifactId>
+            <version>1.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<finalName>web-driver</finalName>

@@ -1,5 +1,10 @@
 package cn.van.daijia.driver.service;
 
+import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.driver.DriverInfoVo;
+import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.NewOrderDataVo;
 import cn.van.daijia.model.vo.order.OrderInfoVo;
@@ -23,4 +28,17 @@ public interface OrderService {
 
     //获取订单账单详细信息
     OrderInfoVo getOrderInfo(Long orderId, Long driverId);
+
+    //计算最佳驾驶路线
+    DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm);
+
+
+    //司机到达代驾起始地点
+    Boolean driverArriveStartLocation(Long orderId, Long driverId);
+
+    //更新代驾车辆信息
+    Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm);
+
+    //开始代驾服务
+    Boolean startDrive(StartDriveForm startDriveForm);
 }

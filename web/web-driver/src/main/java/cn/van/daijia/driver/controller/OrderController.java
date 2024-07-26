@@ -4,6 +4,11 @@ import cn.van.daijia.common.login.VanLogin;
 import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.driver.service.OrderService;
+import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.driver.DriverInfoVo;
+import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.model.vo.order.NewOrderDataVo;
 import cn.van.daijia.model.vo.order.OrderInfoVo;
@@ -11,10 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -74,6 +76,39 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(orderId, driverId));
+    }
+    @Operation(summary = "计算最佳驾驶路线")
+    @VanLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo>calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm){
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
+    }
+
+    @Operation(summary = "司机到达代驾起始地点")
+    @VanLogin
+    @GetMapping("/driverArriveStartLocation/{orderId}")
+    public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId) {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.driverArriveStartLocation(orderId, driverId));
+    }
+
+    @Operation(summary = "更新代驾车辆信息")
+    @VanLogin
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        updateOrderCartForm.setDriverId(driverId);
+        return Result.ok(orderService.updateOrderCart(updateOrderCartForm));
+    }
+
+
+    @Operation(summary = "开始代驾服务")
+    @VanLogin
+    @PostMapping("/startDrive")
+    public Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        startDriveForm.setDriverId(driverId);
+        return Result.ok(orderService.startDrive(startDriveForm));
     }
 
 }

@@ -1,8 +1,13 @@
 package cn.van.daijia.order.controller;
 
+import cn.van.daijia.common.login.VanLogin;
 import cn.van.daijia.common.result.Result;
 import cn.van.daijia.model.entity.order.OrderInfo;
+import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
 import cn.van.daijia.model.form.order.OrderInfoForm;
+import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +59,25 @@ public class OrderInfoController {
     @GetMapping("/getOrderInfo/{orderId}")
     public Result<OrderInfo> getOrderInfo(@PathVariable Long orderId) {
         return Result.ok(orderInfoService.getById(orderId));
+    }
+
+    @Operation(summary = "司机到达起始点")
+    @GetMapping("/driverArriveStartLocation/{orderId}/{driverId}")
+    public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId, @PathVariable Long driverId) {
+        return Result.ok(orderInfoService.driverArriveStartLocation(orderId, driverId));
+    }
+
+    @Operation(summary = "更新代驾车辆信息")
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
+        return Result.ok(orderInfoService.updateOrderCart(updateOrderCartForm));
+    }
+
+    //开始代驾服务
+    @PostMapping("/startDrive")
+    public Result<Boolean> startDriver(@RequestBody StartDriveForm startDriveForm) {
+        Boolean flag = orderInfoService.startDriver(startDriveForm);
+        return Result.ok(flag);
     }
 
 }
