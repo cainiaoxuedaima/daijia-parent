@@ -6,6 +6,7 @@ import cn.van.daijia.model.entity.order.OrderInfo;
 import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
 import cn.van.daijia.model.form.order.OrderInfoForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderBillForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
 import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
@@ -78,6 +79,18 @@ public class OrderInfoController {
     public Result<Boolean> startDriver(@RequestBody StartDriveForm startDriveForm) {
         Boolean flag = orderInfoService.startDriver(startDriveForm);
         return Result.ok(flag);
+    }
+
+    @Operation(summary = "根据时间段获取订单数")
+    @GetMapping("/getOrderNumByTime/{startTime}/{endTime}")
+    public Result<Long> getOrderNumByTime(@PathVariable String startTime, @PathVariable String endTime) {
+        return Result.ok(orderInfoService.getOrderNumByTime(startTime, endTime));
+    }
+
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm) {
+        return Result.ok(orderInfoService.endDrive(updateOrderBillForm));
     }
 
 }

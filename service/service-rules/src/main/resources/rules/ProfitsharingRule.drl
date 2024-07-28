@@ -5,7 +5,7 @@ import cn.van.daijia.model.form.rules.ProfitsharingRuleRequest;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-global cn.van.daijia.model.form.rules.ProfitsharingRuleResponse profitsharingRuleResponse;
+global cn.van.daijia.model.vo.rules.ProfitsharingRuleResponse profitsharingRuleResponse;
 //支付微信平台费率：0.6%
 //global BigDecimal paymentRate = new BigDecimal(0.006);
 /**

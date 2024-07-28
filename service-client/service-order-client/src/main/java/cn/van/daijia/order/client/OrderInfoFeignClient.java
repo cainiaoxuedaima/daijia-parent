@@ -1,10 +1,9 @@
 package cn.van.daijia.order.client;
 
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.model.entity.order.OrderInfo;
-import cn.van.daijia.model.form.order.OrderInfoForm;
-import cn.van.daijia.model.form.order.StartDriveForm;
-import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.form.order.*;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -77,8 +76,23 @@ public interface OrderInfoFeignClient {
     @PostMapping("/order/info/startDrive")
     Result<Boolean>startDrive(@RequestBody StartDriveForm startDriveForm);
 
+    /**
+     *  根据时间段获取订单数
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @GetMapping("/order/info/getOrderNumByTime/{startTime}/{endTime}")
+    Result<Long> getOrderNumByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime);
 
 
+    /**
+     * 结束代驾服务更新订单账单
+     * @param updateOrderBillForm
+     * @return
+     */
+    @PostMapping("/order/info/endDrive")
+    Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm);
 
 
 

@@ -5,6 +5,7 @@ import cn.van.daijia.common.result.Result;
 import cn.van.daijia.common.util.AuthContextHolder;
 import cn.van.daijia.driver.service.OrderService;
 import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
+import cn.van.daijia.model.form.order.OrderFeeForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
 import cn.van.daijia.model.vo.driver.DriverInfoVo;
@@ -109,6 +110,15 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         startDriveForm.setDriverId(driverId);
         return Result.ok(orderService.startDrive(startDriveForm));
+    }
+
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @VanLogin
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody OrderFeeForm orderFeeForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        orderFeeForm.setDriverId(driverId);
+        return Result.ok(orderService.endDrive(orderFeeForm));
     }
 
 }

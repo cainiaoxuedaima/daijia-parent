@@ -3,7 +3,9 @@ package cn.van.daijia.map.service.impl;
 import cn.van.daijia.common.constant.RedisConstant;
 import cn.van.daijia.common.constant.SystemConstant;
 import cn.van.daijia.common.result.Result;
+import cn.van.daijia.common.util.LocationUtil;
 import cn.van.daijia.driver.client.DriverInfoFeignClient;
+import cn.van.daijia.map.repository.OrderServiceLocationRepository;
 import cn.van.daijia.map.service.LocationService;
 import cn.van.daijia.model.entity.driver.DriverSet;
 import cn.van.daijia.model.entity.map.OrderServiceLocation;
@@ -17,6 +19,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.*;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -46,6 +49,10 @@ public class LocationServiceImpl implements LocationService {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Autowired
+    private OrderServiceLocationRepository orderServiceLocationRepository;
+
     /**
      * 更新司机经纬度
      * @param updateDriverLocationForm
@@ -208,5 +215,50 @@ public class LocationServiceImpl implements LocationService {
 
 
         return orderServiceLastLocationVo;
+    }
+
+    /**
+     * 代驾服务：计算订单实际里程
+     * @param orderId
+     * @return
+     */
+    @Override
+    public BigDecimal calculateOrderRealDistance(Long orderId) {
+        //1 根据订单id获取代价订单位置信息，根据创建时间排序 升序
+        //查询mongodb
+        //第一种方式
+//        OrderServiceLocation orderServiceLocation = new OrderServiceLocation();
+//        orderServiceLocation.setOrderId(orderId);
+//        Example<OrderServiceLocation>example=Example.of(orderServiceLocation);
+//
+//        Sort sort = Sort.by(Sort.Direction.ASC, "createTime");
+//        List<OrderServiceLocation> list = orderServiceLocationRepository.findAll(example, sort);
+//
+        //第二种方式 MongoDBRepository
+        //1 查询方法名称以 get/find/read开头
+        //2 后面查询字段名称
+        //3 字段查询条件添加关键字 like OrderBy Asc
+        //
+        List<OrderServiceLocation> list =
+                orderServiceLocationRepository.findByOrderIdOrderByCreateTimeAsc(orderId);
+
+        //2 第一步查询返回订单位置信息list集合
+        //把list集合遍历，得到每个位置信息，计算每个位置距离
+        //把计算所有距离相加操作
+        double realDistance=0;
+        if(!CollectionUtils.isEmpty(list)){
+            for(int i=0,size=list.size()-1;i<size;i++){
+                OrderServiceLocation location1 = list.get(i);
+                OrderServiceLocation location2 = list.get(i+1);
+                //计算位置距离
+                double distance = LocationUtil.getDistance(location1.getLatitude().doubleValue(),
+                        location1.getLongitude().doubleValue(),
+                        location2.getLatitude().doubleValue(),
+                        location2.getLongitude().doubleValue());
+                realDistance+=distance;
+            }
+        }
+        //3 返回最终计算实际距离
+        return new BigDecimal(realDistance);
     }
 }

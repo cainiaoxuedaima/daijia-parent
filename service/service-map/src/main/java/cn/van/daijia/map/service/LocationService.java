@@ -7,6 +7,7 @@ import cn.van.daijia.model.vo.map.NearByDriverVo;
 import cn.van.daijia.model.vo.map.OrderLocationVo;
 import cn.van.daijia.model.vo.map.OrderServiceLastLocationVo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface LocationService {
@@ -27,4 +28,7 @@ public interface LocationService {
 
     //代驾服务：获取订单服务最后一个位置信息
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
+
+    //代驾服务：计算订单实际里程
+    BigDecimal calculateOrderRealDistance(Long orderId);
 }

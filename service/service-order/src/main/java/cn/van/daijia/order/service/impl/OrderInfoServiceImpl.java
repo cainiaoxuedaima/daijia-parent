@@ -3,18 +3,24 @@ package cn.van.daijia.order.service.impl;
 import cn.van.daijia.common.constant.RedisConstant;
 import cn.van.daijia.common.execption.GuiguException;
 import cn.van.daijia.common.result.ResultCodeEnum;
+import cn.van.daijia.model.entity.order.OrderBill;
 import cn.van.daijia.model.entity.order.OrderInfo;
+import cn.van.daijia.model.entity.order.OrderProfitsharing;
 import cn.van.daijia.model.entity.order.OrderStatusLog;
 import cn.van.daijia.model.enums.OrderStatus;
 import cn.van.daijia.model.form.order.OrderInfoForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
+import cn.van.daijia.model.form.order.UpdateOrderBillForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
+import cn.van.daijia.order.mapper.OrderBillMapper;
+import cn.van.daijia.order.mapper.OrderProfitsharingMapper;
 import cn.van.daijia.order.mapper.OrderStatusLogMapper;
 import cn.van.daijia.order.service.OrderInfoService;
 import cn.van.daijia.order.mapper.OrderInfoMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -39,17 +45,23 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     @Autowired
     private OrderInfoMapper orderInfoMapper;
 
-    @Autowired
+    @Resource
     private RedissonClient redissonClient;
+
+    @Autowired
+    private OrderBillMapper orderBillMapper ;
+
+    @Autowired
+    private OrderProfitsharingMapper orderProfitsharingMapper;
 
     //乘客下单
     @Override
     public Long saveOrderInfo(OrderInfoForm orderInfoForm) {
-        //
-        OrderInfo orderInfo=new OrderInfo();
+        //order_info添加订单数据
+        OrderInfo orderInfo = new OrderInfo();
         BeanUtils.copyProperties(orderInfoForm,orderInfo);
         //订单号
-        String orderNo= UUID.randomUUID().toString().replaceAll("-","");
+        String orderNo = UUID.randomUUID().toString().replaceAll("-","");
         orderInfo.setOrderNo(orderNo);
         //订单状态
         orderInfo.setStatus(OrderStatus.WAITING_ACCEPT.getStatus());
@@ -59,14 +71,30 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         this.log(orderInfo.getId(),orderInfo.getStatus());
 
         //向redis添加标识
-        //接单标识，标识不存在了说明不再等待接单状态了
+        //接单标识，标识不存在了说明不在等待接单状态了
         redisTemplate.opsForValue().set(RedisConstant.ORDER_ACCEPT_MARK,
-                "0",
-                RedisConstant.ORDER_ACCEPT_MARK_EXPIRES_TIME,
-                TimeUnit.MINUTES);
+                "0", RedisConstant.ORDER_ACCEPT_MARK_EXPIRES_TIME, TimeUnit.MINUTES);
 
         return orderInfo.getId();
     }
+    //生成订单之后，发送延迟消息
+//    private void sendDelayMessage(Long orderId) {
+//        try{
+//            //1 创建队列
+//            RBlockingQueue<Object> blockingDueue = redissonClient.getBlockingQueue("queue_cancel");
+//
+//            //2 把创建队列放到延迟队列里面
+//            RDelayedQueue<Object> delayedQueue = redissonClient.getDelayedQueue(blockingDueue);
+//
+//            //3 发送消息到延迟队列里面
+//            //设置过期时间
+//            delayedQueue.offer(orderId.toString(),15,TimeUnit.MINUTES);
+//
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//            throw new GuiguException(ResultCodeEnum.DATA_ERROR);
+//        }
+//    }
 
     /**
      * 根据订单id获取订单状态
@@ -319,6 +347,53 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }else{
             throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
         }
+    }
+
+    //根据时间段获取订单数
+    @Override
+    public Long getOrderNumByTime(String startTime, String endTime) {
+        LambdaQueryWrapper<OrderInfo> wrapper=new LambdaQueryWrapper<>();
+        wrapper.ge(OrderInfo::getStartServiceTime,startTime);
+        wrapper.lt(OrderInfo::getStartServiceTime,endTime);
+
+        Long count = orderInfoMapper.selectCount(wrapper);
+        return count;
+    }
+
+
+    //结束代驾服务更新订单账单
+    @Override
+    public Boolean endDrive(UpdateOrderBillForm updateOrderBillForm) {
+        LambdaQueryWrapper<OrderInfo>wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,updateOrderBillForm.getOrderId());
+        wrapper.eq(OrderInfo::getDriverId,updateOrderBillForm.getDriverId());
+
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setStatus(OrderStatus.END_SERVICE.getStatus());
+        orderInfo.setRealAmount(updateOrderBillForm.getTotalAmount());
+        orderInfo.setFavourFee(updateOrderBillForm.getFavourFee());
+        orderInfo.setRealDistance(updateOrderBillForm.getRealDistance());
+        orderInfo.setEndServiceTime(new Date());
+
+        int rows = orderInfoMapper.update(orderInfo, wrapper);
+        if(rows==1){
+            //添加账单数据
+            OrderBill orderBill = new OrderBill();
+            BeanUtils.copyProperties(updateOrderBillForm,orderBill);
+            orderBill.setOrderId(updateOrderBillForm.getOrderId());
+            orderBill.setPayAmount(updateOrderBillForm.getTotalAmount());
+
+            //添加分账信息
+            OrderProfitsharing orderProfitsharing = new OrderProfitsharing();
+            BeanUtils.copyProperties(updateOrderBillForm,orderProfitsharing);
+            orderProfitsharing.setOrderId(updateOrderBillForm.getOrderId());
+            orderProfitsharing.setRuleId(updateOrderBillForm.getProfitsharingRuleId());
+            orderProfitsharing.setStatus(1);
+            orderProfitsharingMapper.insert(orderProfitsharing);
+        }else{
+            throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
     }
 
     public void log(Long orderId, Integer status) {
