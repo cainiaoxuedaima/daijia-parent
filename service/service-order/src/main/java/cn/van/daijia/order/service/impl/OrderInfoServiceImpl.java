@@ -12,6 +12,7 @@ import cn.van.daijia.model.form.order.OrderInfoForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
 import cn.van.daijia.model.form.order.UpdateOrderBillForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.base.PageVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
 import cn.van.daijia.order.mapper.OrderBillMapper;
 import cn.van.daijia.order.mapper.OrderProfitsharingMapper;
@@ -19,6 +20,8 @@ import cn.van.daijia.order.mapper.OrderStatusLogMapper;
 import cn.van.daijia.order.service.OrderInfoService;
 import cn.van.daijia.order.mapper.OrderInfoMapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import jakarta.annotation.Resource;
 import org.redisson.api.RLock;
@@ -394,6 +397,20 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             throw new GuiguException(ResultCodeEnum.UPDATE_ERROR);
         }
         return true;
+    }
+
+    //获取乘客订单分页列表
+    @Override
+    public PageVo findCustomerOrderPage(Page<OrderInfo> pageParam, Long customerId) {
+        IPage<OrderInfo>pageInfo =  orderInfoMapper.selectCustomerOrderPage(pageParam,customerId);
+        return  new PageVo<>(pageInfo.getRecords(),pageInfo.getPages(),pageInfo.getTotal());
+    }
+
+    //获取司机订单分页列表
+    @Override
+    public PageVo findDriverOrderPage(Page<OrderInfo> pageParam, Long driverId) {
+        IPage<OrderInfo>pageInfo =  orderInfoMapper.selectDriverOrderPage(pageParam,driverId);
+        return  new PageVo<>(pageInfo.getRecords(),pageInfo.getPages(),pageInfo.getTotal());
     }
 
     public void log(Long orderId, Integer status) {

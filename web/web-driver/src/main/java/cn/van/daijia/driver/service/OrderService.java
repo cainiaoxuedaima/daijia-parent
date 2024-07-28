@@ -4,6 +4,7 @@ import cn.van.daijia.model.form.map.CalculateDrivingLineForm;
 import cn.van.daijia.model.form.order.OrderFeeForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.base.PageVo;
 import cn.van.daijia.model.vo.driver.DriverInfoVo;
 import cn.van.daijia.model.vo.map.DrivingLineVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
@@ -45,4 +46,7 @@ public interface OrderService {
 
     //结束代驾服务更新订单账单
     Boolean endDrive(OrderFeeForm orderFeeForm);
+
+    //获取司机订单分页列表
+    PageVo findDriverOrderPage(Long driverId, Long page, Long limit);
 }

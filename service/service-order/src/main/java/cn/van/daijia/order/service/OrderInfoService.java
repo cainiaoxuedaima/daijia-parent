@@ -5,7 +5,9 @@ import cn.van.daijia.model.form.order.OrderInfoForm;
 import cn.van.daijia.model.form.order.StartDriveForm;
 import cn.van.daijia.model.form.order.UpdateOrderBillForm;
 import cn.van.daijia.model.form.order.UpdateOrderCartForm;
+import cn.van.daijia.model.vo.base.PageVo;
 import cn.van.daijia.model.vo.order.CurrentOrderInfoVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface OrderInfoService extends IService<OrderInfo> {
@@ -38,4 +40,10 @@ public interface OrderInfoService extends IService<OrderInfo> {
 
     //结束代驾服务更新订单账单
     Boolean endDrive(UpdateOrderBillForm updateOrderBillForm);
+
+    //获取乘客订单分页列表
+    PageVo findCustomerOrderPage(Page<OrderInfo> pageParam, Long customerId);
+
+    //获取司机订单分页列表
+    PageVo findDriverOrderPage(Page<OrderInfo> pageParam, Long driverId);
 }
